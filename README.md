@@ -49,5 +49,5 @@ Se quiser rodar ou modificar o projeto no seu computador:
 * [ ] Permitir exportar/importar ficha em JSON.
 
 ---
-
-Feito com 🎶 e ☕ por [Nick Evangelista](https://github.com/nickevangelista)
+## Autores
+- Nícolas Evangelista (@nickevangelista)
