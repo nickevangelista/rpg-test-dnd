@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grimório do Bardo</title>
+    <title>RPG Manager Web</title>
     <style>
         :root {
             --bg-color: #1a1a1d;
@@ -20,17 +20,30 @@
             color: var(--text);
             margin: 0;
             padding: 20px;
+            padding-bottom: 80px; /* Espaço para scroll no celular */
         }
 
         h1, h2, h3 { color: var(--accent); margin-bottom: 10px; }
         
-        /* Container Principal */
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
+        /* Layout Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
         }
 
-        /* Status do Personagem */
+        .char-title h1 { margin: 0; font-size: 1.8em; }
+        .char-subtitle { color: #888; font-size: 0.9em; margin-top: 5px; }
+
+        .btn-icon {
+            background: transparent; border: 1px solid #444; color: #fff;
+            padding: 8px 12px; border-radius: 8px; font-size: 1.2em; cursor: pointer;
+        }
+
+        .container { max-width: 600px; margin: 0 auto; }
+
+        /* Status Bar */
         .stats-bar {
             display: flex;
             justify-content: space-between;
@@ -40,251 +53,226 @@
             margin-bottom: 20px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.3);
         }
-        .stat-box { text-align: center; }
-        .stat-val { font-size: 1.5em; font-weight: bold; display: block;}
-        .stat-label { font-size: 0.8em; color: #aaa; }
+        .stat-box { text-align: center; width: 30%; }
+        .stat-val { font-size: 1.5em; font-weight: bold; display: block; color: #fff; }
+        .stat-label { font-size: 0.8em; color: #aaa; text-transform: uppercase; }
 
-        /* Slots de Magia */
+        /* Slots */
         .slots-section {
             background: var(--card-bg);
             padding: 15px;
             border-radius: 8px;
             margin-bottom: 20px;
         }
-        
         .slot-row {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-            border-bottom: 1px solid #444;
-            padding-bottom: 5px;
+            display: flex; align-items: center;
+            margin-bottom: 10px; border-bottom: 1px solid #444; padding-bottom: 5px;
         }
-        
-        .slot-level-label { width: 80px; font-weight: bold; }
-        
-        .slot-bubbles { display: flex; gap: 8px; flex-wrap: wrap; }
-        
+        .slot-level-label { width: 70px; font-weight: bold; font-size: 0.9em; }
+        .slot-bubbles { display: flex; gap: 6px; flex-wrap: wrap; }
         .slot-bubble {
-            width: 25px;
-            height: 25px;
-            border-radius: 50%;
-            border: 2px solid var(--accent);
-            cursor: pointer;
-            transition: background 0.2s;
+            width: 28px; height: 28px; border-radius: 50%;
+            border: 2px solid var(--accent); cursor: pointer;
+            transition: all 0.2s;
         }
-        
         .slot-bubble.ready { background-color: var(--accent); box-shadow: 0 0 5px var(--accent); }
-        .slot-bubble.spent { background-color: transparent; border-color: #555; }
+        .slot-bubble.spent { background-color: transparent; border-color: #444; }
 
-        /* Lista de Magias */
+        /* Magias */
         .spell-list { list-style: none; padding: 0; }
-        
         .spell-card {
-            background: var(--card-bg);
-            border-left: 5px solid var(--accent);
-            margin-bottom: 10px;
-            padding: 15px;
-            border-radius: 4px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            background: var(--card-bg); border-left: 4px solid var(--accent);
+            margin-bottom: 10px; padding: 15px; border-radius: 4px;
+            display: flex; justify-content: space-between; align-items: center;
         }
-
-        .spell-info h3 { margin: 0 0 5px 0; font-size: 1.1em; color: #fff; }
-        .spell-info p { margin: 0; font-size: 0.9em; color: #aaa; }
+        .spell-info h3 { margin: 0 0 4px 0; font-size: 1.1em; color: #fff; }
+        .spell-info p { margin: 0; font-size: 0.85em; color: #aaa; }
         
-        button {
-            background: var(--accent);
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-        }
+        /* Botões Gerais */
+        button { border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .btn-cast { background: var(--accent); color: white; padding: 8px 12px; margin-left: 10px; }
+        .btn-cast:disabled { background: #444; color: #888; cursor: not-allowed; opacity: 0.7; }
+        .btn-rest { width: 100%; padding: 12px; background: #4e4e50; color: white; margin-bottom: 20px; font-size: 1em; }
+        .btn-add { background: #1a73e8; color: white; width: 100%; padding: 10px; margin-bottom: 20px; }
         
-        button:disabled { background: #555; cursor: not-allowed; }
-        
-        .btn-cast { margin-left: 10px; }
-        .btn-rest { width: 100%; padding: 15px; background: #4e4e50; margin-bottom: 20px; }
-        .btn-add { background: #1a73e8; margin-bottom: 20px; width: 100%; padding: 10px;}
-
-        /* Modal de Adicionar */
-        #modal {
-            display: none;
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8);
-            justify-content: center;
-            align-items: center;
+        /* Modals */
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); z-index: 100;
+            justify-content: center; align-items: center;
         }
         .modal-content {
-            background: var(--card-bg);
-            padding: 20px;
-            border-radius: 8px;
-            width: 90%;
-            max-width: 400px;
+            background: #252529; padding: 25px; border-radius: 12px;
+            width: 90%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
         }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; color: #ccc; font-size: 0.9em;}
         input, select {
-            width: 100%; padding: 10px; margin: 5px 0 15px 0;
-            background: #222; border: 1px solid #444; color: white;
-            box-sizing: border-box; /* Garante que padding não estoure width */
+            width: 100%; padding: 12px; background: #1a1a1d; border: 1px solid #444;
+            color: white; border-radius: 6px; box-sizing: border-box; font-size: 1em;
         }
+        .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+        .btn-save { flex: 1; background: var(--accent); color: white; padding: 12px; }
+        .btn-cancel { flex: 1; background: #444; color: white; padding: 12px; }
+
     </style>
 </head>
 <body>
 
 <div class="container">
     <header>
-        <h1><span id="char-name">Bardo</span> <small style="font-size:0.5em; color:#aaa">Nvl <span id="char-level">5</span></small></h1>
+        <div class="char-title">
+            <h1 id="char-name">Nome</h1>
+            <div class="char-subtitle">
+                <span id="char-class">Classe</span> • Nvl <span id="char-level">1</span>
+            </div>
+        </div>
+        <button class="btn-icon" onclick="openCharModal()">⚙️</button>
     </header>
 
     <div class="stats-bar">
         <div class="stat-box">
-            <span class="stat-val" id="hp-display">38</span>
+            <span class="stat-val" id="hp-display">0</span>
             <span class="stat-label">HP Máx</span>
         </div>
         <div class="stat-box">
-            <span class="stat-val" id="ac-display">14</span>
+            <span class="stat-val" id="ac-display">0</span>
             <span class="stat-label">AC</span>
         </div>
         <div class="stat-box">
-            <span class="stat-val" id="dc-display">15</span>
-            <span class="stat-label">DC Magia</span>
+            <span class="stat-val" id="dc-display">0</span>
+            <span class="stat-label">DC</span>
         </div>
     </div>
 
-    <button class="btn-rest" onclick="longRest()">💤 Descanso Longo (Recuperar Tudo)</button>
+    <button class="btn-rest" onclick="longRest()">💤 Descanso Longo (Recuperar)</button>
 
-    <div class="slots-section" id="slots-container">
-        </div>
+    <div class="slots-section" id="slots-container"></div>
 
     <div style="display:flex; justify-content:space-between; align-items:center;">
         <h2>Grimório</h2>
     </div>
-    <button class="btn-add" onclick="openModal()">+ Nova Magia</button>
+    <button class="btn-add" onclick="openSpellModal()">+ Nova Magia</button>
     
-    <ul class="spell-list" id="spell-list">
-        </ul>
+    <ul class="spell-list" id="spell-list"></ul>
+    
+    <br>
+    <button onclick="hardReset()" style="background: darkred; color: #eba6a6; width: 100%; padding: 10px; margin-top: 30px; font-size:0.8em">⚠️ Apagar Personagem</button>
 </div>
 
-<div id="modal">
+<div id="modal-char" class="modal">
+    <div class="modal-content">
+        <h3>Editar Personagem</h3>
+        
+        <div class="form-group">
+            <label>Nome do Personagem</label>
+            <input type="text" id="edit-name">
+        </div>
+
+        <div class="form-group" style="display:flex; gap:10px;">
+            <div style="flex:2">
+                <label>Classe</label>
+                <input type="text" id="edit-class">
+            </div>
+            <div style="flex:1">
+                <label>Nível</label>
+                <input type="number" id="edit-level">
+            </div>
+        </div>
+
+        <div class="form-group" style="display:flex; gap:10px;">
+            <div>
+                <label>HP Máx</label>
+                <input type="number" id="edit-hp">
+            </div>
+            <div>
+                <label>AC (Armadura)</label>
+                <input type="number" id="edit-ac">
+            </div>
+            <div>
+                <label>DC (Magia)</label>
+                <input type="number" id="edit-dc">
+            </div>
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn-save" onclick="saveCharData()">Salvar</button>
+            <button class="btn-cancel" onclick="closeModal('modal-char')">Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<div id="modal-spell" class="modal">
     <div class="modal-content">
         <h3>Adicionar Magia</h3>
-        <label>Nome:</label>
-        <input type="text" id="new-spell-name" placeholder="Ex: Fireball">
-        
-        <label>Nível (0 = Truque):</label>
-        <select id="new-spell-level">
-            <option value="0">Truque</option>
-            <option value="1">Nível 1</option>
-            <option value="2">Nível 2</option>
-            <option value="3">Nível 3</option>
-            <option value="4">Nível 4</option>
-            <option value="5">Nível 5</option>
-            <option value="6">Nível 6</option>
-            <option value="7">Nível 7</option>
-            <option value="8">Nível 8</option>
-            <option value="9">Nível 9</option>
-        </select>
-
-        <label>Descrição curta:</label>
-        <input type="text" id="new-spell-desc" placeholder="Dano, alcance, etc...">
-
-        <div style="display:flex; gap:10px; margin-top:10px;">
-            <button onclick="saveNewSpell()" style="flex:1; background:var(--accent)">Salvar</button>
-            <button onclick="closeModal()" style="flex:1; background:#555">Cancelar</button>
+        <div class="form-group">
+            <label>Nome da Magia</label>
+            <input type="text" id="new-spell-name" placeholder="Ex: Fireball">
+        </div>
+        <div class="form-group">
+            <label>Nível (0 = Truque)</label>
+            <select id="new-spell-level">
+                <option value="0">Truque (Cantrip)</option>
+                <option value="1">Nível 1</option>
+                <option value="2">Nível 2</option>
+                <option value="3">Nível 3</option>
+                <option value="4">Nível 4</option>
+                <option value="5">Nível 5</option>
+                <option value="6">Nível 6</option>
+                <option value="7">Nível 7</option>
+                <option value="8">Nível 8</option>
+                <option value="9">Nível 9</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Descrição Curta</label>
+            <input type="text" id="new-spell-desc" placeholder="Dano, alcance, etc...">
+        </div>
+        <div class="modal-actions">
+            <button class="btn-save" onclick="saveNewSpell()">Adicionar</button>
+            <button class="btn-cancel" onclick="closeModal('modal-spell')">Cancelar</button>
         </div>
     </div>
 </div>
 
 <script>
-    // --- Dados Iniciais (Configuração padrão) ---
+    // Configuração Padrão (só usada no primeiro acesso ou após reset)
     const defaultData = {
-        name: "Adrian Duvell",
-        level: 5,
-        stats: { hp: 38, ac: 14, dc: 15 },
-        // Configuração de Slots Maximos por Nível (D&D 5e Bardo Nvl 5)
-        slotsMax: { 1: 4, 2: 3, 3: 2, 4: 0, 5: 0, 6:0, 7:0, 8:0, 9:0 },
-        // Slots gastos atualmente (0 = nenhum gasto)
+        name: "Personagem Novo",
+        class: "Bardo",
+        level: 1,
+        stats: { hp: 10, ac: 12, dc: 13 },
+        slotsMax: { 1: 2, 2: 0, 3: 0, 4: 0, 5: 0, 6:0, 7:0, 8:0, 9:0 },
         slotsSpent: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6:0, 7:0, 8:0, 9:0 },
-        spells: [
-            { id: 1, name: "Vicious Mockery", level: 0, desc: "1d4 Psíquico + Desvantagem" },
-            { id: 2, name: "Healing Word", level: 1, desc: "1d4 + Mod (Bônus Action)" },
-            { id: 3, name: "Shatter", level: 2, desc: "3d8 Trovão em área" }
-        ]
+        spells: []
     };
 
-    // Variável global de estado
     let data = {};
 
-    // --- Core Functions ---
-
     function init() {
-        const saved = localStorage.getItem('bardoData');
+        const saved = localStorage.getItem('rpgSheetData');
         if (saved) {
             data = JSON.parse(saved);
         } else {
-            data = JSON.parse(JSON.stringify(defaultData)); // Deep copy
+            data = JSON.parse(JSON.stringify(defaultData));
         }
+        // Migração simples para quem tinha versão antiga sem 'class'
+        if (!data.class) data.class = "Classe";
+        
         render();
     }
 
     function saveData() {
-        localStorage.setItem('bardoData', JSON.stringify(data));
+        localStorage.setItem('rpgSheetData', JSON.stringify(data));
         render();
     }
 
-    function longRest() {
-        if(confirm("Fazer descanso longo? Todos os slots serão recuperados.")) {
-            // Zera os gastos
-            for (let lvl in data.slotsSpent) {
-                data.slotsSpent[lvl] = 0;
-            }
-            saveData();
-        }
-    }
-
-    function castSpell(level) {
-        if (level === 0) {
-            alert("Truques não gastam slots!");
-            return;
-        }
-        
-        // Verifica se tem slot disponivel
-        if (data.slotsSpent[level] < data.slotsMax[level]) {
-            data.slotsSpent[level]++;
-            saveData();
-        } else {
-            alert(`Sem slots de Nível ${level} disponíveis! Tente um nível superior.`);
-        }
-    }
-
-    // Função para clicar na bolinha do slot manualmente
-    function toggleSlot(level, index) {
-        // Se clicar numa bolinha gasta, recupera. Se clicar numa cheia, gasta.
-        // Simplificação: Clicar na linha adiciona ou remove gastos.
-        // Melhor UX: Vamos apenas renderizar. O botão "Lançar" na magia é o principal.
-        // Mas para controle manual:
-        
-        // Se o slot clicado (index) for menor que o número de slots disponiveis atuais
-        // Significa que cliquei num slot "vivo" -> gasta ele.
-        const available = data.slotsMax[level] - data.slotsSpent[level];
-        
-        if (index < available) {
-            // Gastar
-            data.slotsSpent[level]++;
-        } else {
-            // Recuperar
-            data.slotsSpent[level]--;
-        }
-        saveData();
-    }
-
-    // --- Renderização (HTML Generation) ---
-
     function render() {
+        // Render Header & Stats
         document.getElementById('char-name').innerText = data.name;
+        document.getElementById('char-class').innerText = data.class;
         document.getElementById('char-level').innerText = data.level;
+        
         document.getElementById('hp-display').innerText = data.stats.hp;
         document.getElementById('ac-display').innerText = data.stats.ac;
         document.getElementById('dc-display').innerText = data.stats.dc;
@@ -311,15 +299,11 @@
                 const spent = data.slotsSpent[i];
                 const available = total - spent;
 
-                // Renderiza bolinhas
-                // Ordem visual: Bolinhas cheias primeiro
                 for (let j = 0; j < total; j++) {
                     const bubble = document.createElement('div');
-                    // Se j < available, é um slot pronto. Se não, está gasto.
                     const isReady = j < available;
-                    
                     bubble.className = `slot-bubble ${isReady ? 'ready' : 'spent'}`;
-                    bubble.onclick = () => toggleSlot(i, j); // Permite clique manual
+                    bubble.onclick = () => toggleSlot(i, j); 
                     bubblesDiv.appendChild(bubble);
                 }
 
@@ -328,19 +312,20 @@
                 slotsContainer.appendChild(row);
             }
         }
-        if(!hasSlots) slotsContainer.innerHTML += "<p style='color:#777'>Nenhum slot configurado.</p>";
+        if(!hasSlots) slotsContainer.innerHTML += "<p style='color:#777; font-size:0.9em'>Vá em ⚙️ Configurações para definir seus slots!</p>"; // Futuro: editar slots
 
         // Render Spells
         const list = document.getElementById('spell-list');
         list.innerHTML = '';
-        
-        // Ordenar: Truques primeiro, depois por nível
         data.spells.sort((a, b) => a.level - b.level);
+
+        if (data.spells.length === 0) {
+            list.innerHTML = "<p style='text-align:center; color:#555;'>Grimório vazio.</p>";
+        }
 
         data.spells.forEach((spell, index) => {
             const li = document.createElement('li');
             li.className = 'spell-card';
-            
             const levelText = spell.level === 0 ? "Truque" : `Nível ${spell.level}`;
             const isCastable = spell.level === 0 || (data.slotsMax[spell.level] - data.slotsSpent[spell.level] > 0);
 
@@ -349,21 +334,43 @@
                     <h3>${spell.name} <small style="font-size:0.7em; color:var(--accent)">(${levelText})</small></h3>
                     <p>${spell.desc}</p>
                 </div>
-                <button class="btn-cast" 
-                    onclick="castSpell(${spell.level})"
-                    ${!isCastable ? 'disabled' : ''}
-                    style="${!isCastable ? 'opacity:0.5' : ''}">
-                    ${spell.level === 0 ? 'Usar' : 'Gastar'}
-                </button>
-                <button onclick="removeSpell(${index})" style="background:transparent; color:#555; font-size:1.2em; margin-left:5px;">&times;</button>
+                <div>
+                    <button class="btn-cast" onclick="castSpell(${spell.level})" ${!isCastable ? 'disabled' : ''} style="${!isCastable ? 'opacity:0.3' : ''}">
+                        ${spell.level === 0 ? '♾️' : 'Gastar'}
+                    </button>
+                    <button onclick="removeSpell(${index})" style="background:transparent; color:#666; font-size:1.2em; margin-left:5px;">&times;</button>
+                </div>
             `;
             list.appendChild(li);
         });
     }
 
-    // --- Modal Logic ---
-    function openModal() { document.getElementById('modal').style.display = 'flex'; }
-    function closeModal() { document.getElementById('modal').style.display = 'none'; }
+    // --- Lógica de Personagem (EDITAR) ---
+    function openCharModal() {
+        document.getElementById('edit-name').value = data.name;
+        document.getElementById('edit-class').value = data.class;
+        document.getElementById('edit-level').value = data.level;
+        document.getElementById('edit-hp').value = data.stats.hp;
+        document.getElementById('edit-ac').value = data.stats.ac;
+        document.getElementById('edit-dc').value = data.stats.dc;
+        
+        document.getElementById('modal-char').style.display = 'flex';
+    }
+
+    function saveCharData() {
+        data.name = document.getElementById('edit-name').value;
+        data.class = document.getElementById('edit-class').value;
+        data.level = parseInt(document.getElementById('edit-level').value);
+        data.stats.hp = parseInt(document.getElementById('edit-hp').value);
+        data.stats.ac = parseInt(document.getElementById('edit-ac').value);
+        data.stats.dc = parseInt(document.getElementById('edit-dc').value);
+        
+        saveData();
+        closeModal('modal-char');
+    }
+
+    // --- Lógica de Magias ---
+    function openSpellModal() { document.getElementById('modal-spell').style.display = 'flex'; }
     
     function saveNewSpell() {
         const name = document.getElementById('new-spell-name').value;
@@ -371,33 +378,63 @@
         const desc = document.getElementById('new-spell-desc').value;
 
         if(name) {
-            data.spells.push({
-                id: Date.now(),
-                name: name,
-                level: level,
-                desc: desc
-            });
+            data.spells.push({ id: Date.now(), name, level, desc });
             saveData();
-            closeModal();
-            // Limpar inputs
+            closeModal('modal-spell');
             document.getElementById('new-spell-name').value = '';
             document.getElementById('new-spell-desc').value = '';
-        } else {
-            alert("Digite o nome da magia!");
         }
     }
 
     function removeSpell(index) {
-        if(confirm("Remover esta magia do grimório?")) {
+        if(confirm("Remover magia?")) {
             data.spells.splice(index, 1);
             saveData();
         }
     }
 
-    // Start
+    function castSpell(level) {
+        if (level === 0) return; // Truque não gasta
+        if (data.slotsSpent[level] < data.slotsMax[level]) {
+            data.slotsSpent[level]++;
+            saveData();
+        } else {
+            alert(`Sem slots de Nível ${level}!`);
+        }
+    }
+
+    function toggleSlot(level, index) {
+        const available = data.slotsMax[level] - data.slotsSpent[level];
+        if (index < available) data.slotsSpent[level]++;
+        else data.slotsSpent[level]--;
+        saveData();
+    }
+
+    function longRest() {
+        if(confirm("Descanso longo? (Recupera todos os slots)")) {
+            for (let lvl in data.slotsSpent) data.slotsSpent[lvl] = 0;
+            saveData();
+        }
+    }
+    
+    function hardReset() {
+        if(confirm("ATENÇÃO: Isso apaga TUDO e volta ao padrão. Continuar?")) {
+            localStorage.clear();
+            location.reload();
+        }
+    }
+
+    // --- Util ---
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+    
+    // Fechar modal clicando fora
+    window.onclick = function(event) {
+        if (event.target.classList.contains('modal')) {
+            event.target.style.display = "none";
+        }
+    }
+
     init();
-
 </script>
-
 </body>
 </html>
