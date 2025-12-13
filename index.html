@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RPG Manager - Auto API</title>
+    <title>RPG Manager - Tabs</title>
     <style>
         :root {
             --bg-color: #121214;
             --card-bg: #202024;
-            --accent: #8257e5; /* Roxo Místico */
+            --accent: #8257e5; 
             --accent-hover: #9466ff;
             --text: #e1e1e6;
             --text-secondary: #a8a8b3;
@@ -24,61 +24,85 @@
 
         h1, h2, h3 { margin: 0; }
         
-        /* Header */
+        /* Header Compacto */
         header {
             display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid #323238;
+            margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #323238;
         }
-        .char-info h1 { font-size: 1.5em; color: var(--accent); }
-        .char-info p { font-size: 0.9em; color: var(--text-secondary); margin-top: 5px; }
+        .char-info h1 { font-size: 1.4em; color: var(--accent); }
+        .char-info p { font-size: 0.8em; color: var(--text-secondary); margin-top: 2px; }
 
+        /* --- TABS SYSTEM --- */
+        .tabs-nav {
+            display: flex; gap: 10px; margin-bottom: 20px;
+        }
+        .tab-btn {
+            flex: 1; padding: 12px; background: #202024; border: 1px solid #323238;
+            color: #888; border-radius: 6px; font-weight: bold; cursor: pointer; text-align: center;
+        }
+        .tab-btn.active {
+            background: var(--accent); color: white; border-color: var(--accent);
+        }
+        
+        /* Conteúdo das Abas */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- NOTEPAD STYLES --- */
+        .notepad-container {
+            display: flex; flex-direction: column; height: 70vh;
+        }
+        .notepad-area {
+            flex: 1; background: #202024; color: #e1e1e6; border: 1px solid #323238;
+            border-radius: 8px; padding: 15px; font-family: 'Courier New', Courier, monospace;
+            font-size: 1em; line-height: 1.5; resize: none; outline: none;
+        }
+        .notepad-area:focus { border-color: var(--accent); }
+        
         /* Stats Grid */
         .stats-grid {
             display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
             margin-bottom: 25px;
         }
         .stat-card {
-            background: var(--card-bg); padding: 15px; border-radius: 8px;
+            background: var(--card-bg); padding: 10px; border-radius: 8px;
             text-align: center; border: 1px solid #323238;
         }
-        .stat-val { display: block; font-size: 1.4em; font-weight: bold; color: #fff; }
-        .stat-label { font-size: 0.75em; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; }
+        .stat-val { display: block; font-size: 1.2em; font-weight: bold; color: #fff; }
+        .stat-label { font-size: 0.7em; color: var(--text-secondary); text-transform: uppercase; }
 
         /* Slots System */
-        .slots-container { margin-bottom: 30px; }
         .slot-row {
-            display: flex; align-items: center; margin-bottom: 12px;
-            background: var(--card-bg); padding: 10px; border-radius: 6px;
+            display: flex; align-items: center; margin-bottom: 10px;
+            background: var(--card-bg); padding: 8px 12px; border-radius: 6px;
         }
-        .slot-label { width: 60px; font-weight: bold; font-size: 0.9em; color: var(--text-secondary); }
-        .slot-bubbles { display: flex; gap: 8px; flex-wrap: wrap; flex: 1; }
+        .slot-label { width: 50px; font-weight: bold; font-size: 0.85em; color: var(--text-secondary); }
+        .slot-bubbles { display: flex; gap: 6px; flex-wrap: wrap; flex: 1; }
         .bubble {
-            width: 24px; height: 24px; border-radius: 50%;
+            width: 22px; height: 22px; border-radius: 50%;
             border: 2px solid var(--accent); cursor: pointer; transition: 0.2s;
         }
         .bubble.spent { background: transparent; border-color: #444; }
-        .bubble.ready { background: var(--accent); box-shadow: 0 0 8px rgba(130, 87, 229, 0.4); }
+        .bubble.ready { background: var(--accent); box-shadow: 0 0 5px rgba(130, 87, 229, 0.4); }
 
         /* Spell List */
         .spell-list { list-style: none; padding: 0; }
         .spell-card {
             background: var(--card-bg); border-left: 3px solid var(--accent);
-            margin-bottom: 12px; padding: 15px; border-radius: 4px;
+            margin-bottom: 10px; padding: 12px; border-radius: 4px;
             display: flex; justify-content: space-between; align-items: center;
         }
-        .spell-main h3 { font-size: 1em; color: #fff; }
-        .spell-meta { font-size: 0.8em; color: var(--text-secondary); margin-top: 4px; }
+        .spell-main h3 { font-size: 0.95em; color: #fff; }
+        .spell-meta { font-size: 0.75em; color: var(--text-secondary); }
         
-        /* Buttons */
-        button { border: none; border-radius: 4px; cursor: pointer; font-weight: 600; transition: 0.2s; }
+        /* Buttons e Modals (Mantidos do anterior) */
+        button { border: none; border-radius: 4px; cursor: pointer; font-weight: 600; }
         .btn-icon { background: #323238; color: #fff; padding: 8px 12px; }
         .btn-main { background: var(--accent); color: white; width: 100%; padding: 12px; margin-bottom: 15px; }
-        .btn-main:hover { background: var(--accent-hover); }
         .btn-cast { background: var(--accent); color: white; padding: 6px 12px; font-size: 0.8em; }
         .btn-cast:disabled { background: #323238; color: #666; cursor: not-allowed; }
-        .btn-danger { background: rgba(229, 76, 76, 0.1); color: var(--danger); width: 100%; padding: 10px; margin-top: 20px;}
-
-        /* Modal & Form */
+        
         .modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.8); z-index: 1000;
@@ -88,97 +112,87 @@
             background: #202024; padding: 25px; border-radius: 12px;
             width: 90%; max-width: 450px; position: relative;
         }
-        .input-group { margin-bottom: 15px; position: relative; }
+        .input-group { margin-bottom: 15px; }
         .input-group label { display: block; color: var(--text-secondary); font-size: 0.85em; margin-bottom: 5px; }
         input, select {
             width: 100%; padding: 12px; background: #121214; border: 1px solid #323238;
             color: white; border-radius: 6px; box-sizing: border-box;
         }
         
-        /* Loading Overlay */
-        #loading {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); z-index: 2000; color: var(--accent);
-            justify-content: center; align-items: center; flex-direction: column;
-        }
-        .spinner {
-            border: 4px solid #333; border-top: 4px solid var(--accent);
-            border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 10px;
-        }
+        /* Loading & Suggestions */
+        #loading { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; color: var(--accent); justify-content: center; align-items: center; flex-direction: column; }
+        .spinner { border: 4px solid #333; border-top: 4px solid var(--accent); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 10px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
-        /* Auto-complete List */
-        #spell-suggestions {
-            position: absolute; top: 100%; left: 0; right: 0;
-            background: #2d2d35; border: 1px solid #444;
-            max-height: 150px; overflow-y: auto; z-index: 10;
-            border-radius: 0 0 6px 6px; display: none;
-        }
+        #spell-suggestions { position: absolute; top: 100%; left: 0; right: 0; background: #2d2d35; border: 1px solid #444; max-height: 150px; overflow-y: auto; z-index: 10; border-radius: 0 0 6px 6px; display: none; }
         .suggestion-item { padding: 10px; cursor: pointer; border-bottom: 1px solid #333; }
-        .suggestion-item:hover { background: #383840; }
 
     </style>
 </head>
 <body>
 
-<div id="loading">
-    <div class="spinner"></div>
-    <span id="loading-text">Conectando à Trama Mágica...</span>
-</div>
+<div id="loading"><div class="spinner"></div><span id="loading-text">Carregando...</span></div>
 
-<div class="container">
+<div class="container" style="max-width: 600px; margin: 0 auto;">
     <header>
         <div class="char-info">
             <h1 id="char-name">Nome</h1>
             <p><span id="char-class">Classe</span> Nvl <span id="char-level">1</span></p>
         </div>
-        <button class="btn-icon" onclick="openCharModal()">⚙️ Ajustes</button>
+        <button class="btn-icon" onclick="openCharModal()">⚙️</button>
     </header>
 
-    <div class="stats-grid">
-        <div class="stat-card">
-            <span class="stat-val" id="hp-display">--</span>
-            <span class="stat-label">HP Máx</span>
+    <div class="tabs-nav">
+        <div class="tab-btn active" onclick="switchTab('main')">🧙‍♂️ Grimório</div>
+        <div class="tab-btn" onclick="switchTab('notes')">📝 Diário</div>
+    </div>
+
+    <div id="tab-main" class="tab-content active">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-val" id="hp-display">--</span>
+                <span class="stat-label">HP Máx</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-val" id="dc-display">--</span>
+                <span class="stat-label">DC Magia</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-val" id="mod-display">--</span>
+                <span class="stat-label">Mod. Atk</span>
+            </div>
         </div>
-        <div class="stat-card">
-            <span class="stat-val" id="dc-display">--</span>
-            <span class="stat-label">DC Magia</span>
+
+        <button class="btn-main" style="background:#333;" onclick="longRest()">💤 Descanso Longo</button>
+
+        <div id="slots-container" style="margin-bottom: 20px;"></div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <h3>Magias</h3>
         </div>
-        <div class="stat-card">
-            <span class="stat-val" id="mod-display">--</span>
-            <span class="stat-label">Atk Magia</span>
+        
+        <button class="btn-main" onclick="openSpellModal()">+ Aprender Magia (API)</button>
+        <ul id="spell-list" class="spell-list"></ul>
+    </div>
+
+    <div id="tab-notes" class="tab-content">
+        <div class="notepad-container">
+            <h3 style="margin-bottom:10px; color:#aaa;">Anotações de Sessão</h3>
+            <textarea id="notepad-area" class="notepad-area" placeholder="Digite aqui suas anotações... (Salvo automaticamente)"></textarea>
+            <button onclick="clearNotes()" style="background:transparent; color:#666; margin-top:10px; font-size:0.8em">Limpar anotações</button>
         </div>
     </div>
 
-    <button class="btn-main" style="background:#333;" onclick="longRest()">💤 Descanso Longo</button>
-
-    <div id="slots-container" class="slots-container"></div>
-
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-        <h2>Grimório</h2>
-        <span style="font-size:0.8em; color:#666">Powered by D&D 5e API</span>
-    </div>
-    
-    <button class="btn-main" onclick="openSpellModal()">+ Nova Magia (API)</button>
-    
-    <ul id="spell-list" class="spell-list"></ul>
-    
-    <button class="btn-danger" onclick="hardReset()">⚠️ Resetar Personagem</button>
 </div>
 
 <div id="modal-char" class="modal">
     <div class="modal-content">
-        <h3>Level Up & Dados</h3>
-        <p style="font-size:0.8em; color:#aaa; margin-bottom:15px">Alterar o nível ou classe buscará a tabela de slots automaticamente.</p>
-        
+        <h3>Editar Personagem</h3>
         <div class="input-group">
-            <label>Nome</label>
-            <input type="text" id="edit-name">
+            <label>Nome</label><input type="text" id="edit-name">
         </div>
-        
         <div class="input-group" style="display:flex; gap:10px">
             <div style="flex:1">
-                <label>Classe (Inglês)</label>
+                <label>Classe</label>
                 <select id="edit-class">
                     <option value="bard">Bard</option>
                     <option value="wizard">Wizard</option>
@@ -187,301 +201,142 @@
                     <option value="druid">Druid</option>
                     <option value="warlock">Warlock</option>
                     <option value="paladin">Paladin</option>
-                    <option value="ranger">Ranger</option>
                 </select>
             </div>
-            <div style="flex:1">
-                <label>Nível</label>
-                <input type="number" id="edit-level" min="1" max="20">
-            </div>
+            <div style="flex:1"><label>Nível</label><input type="number" id="edit-level" min="1" max="20"></div>
         </div>
-
-        <div class="input-group">
-            <label>HP Máximo</label>
-            <input type="number" id="edit-hp">
-        </div>
-        
+        <div class="input-group"><label>HP Máximo</label><input type="number" id="edit-hp"></div>
         <div class="input-group" style="display:flex; gap:10px">
-            <div>
-                <label>DC (Save)</label>
-                <input type="number" id="edit-dc">
-            </div>
-            <div>
-                <label>Mod. Atk</label>
-                <input type="number" id="edit-mod">
-            </div>
+            <div><label>DC</label><input type="number" id="edit-dc"></div>
+            <div><label>Mod</label><input type="number" id="edit-mod"></div>
         </div>
-
-        <button class="btn-main" onclick="saveCharData()">Salvar e Atualizar</button>
+        <button class="btn-main" onclick="saveCharData()">Salvar</button>
         <button class="btn-main" style="background:transparent; border:1px solid #444;" onclick="closeModal('modal-char')">Cancelar</button>
     </div>
 </div>
 
 <div id="modal-spell" class="modal">
     <div class="modal-content">
-        <h3>Aprender Nova Magia</h3>
-        
+        <h3>Nova Magia</h3>
         <div class="input-group">
-            <label>Buscar na API (Nome em Inglês)</label>
+            <label>Buscar (Inglês)</label>
             <input type="text" id="api-search" placeholder="Ex: Fireball" onkeyup="filterSpells()">
             <div id="spell-suggestions"></div>
         </div>
-
-        <div id="spell-details-preview" style="display:none; background:#121214; padding:10px; border-radius:6px; margin-bottom:15px; border:1px solid #333;">
-            <p style="color:var(--accent); font-weight:bold; margin:0 0 5px 0" id="preview-name">Magic Name</p>
-            <p style="font-size:0.8em; color:#aaa; margin:0" id="preview-meta">Level 3 • Evocation</p>
-            <p style="font-size:0.8em; margin:5px 0 0 0" id="preview-desc">Description...</p>
+        <div id="spell-preview" style="display:none; padding:10px; background:#121214; border-radius:6px; margin-bottom:15px; border:1px solid #333;">
+            <strong id="prev-name" style="color:var(--accent)"></strong><br>
+            <small id="prev-meta" style="color:#aaa"></small>
+            <p id="prev-desc" style="font-size:0.8em; margin-top:5px;"></p>
         </div>
-
-        <input type="hidden" id="final-spell-name">
-        <input type="hidden" id="final-spell-level">
-        <input type="hidden" id="final-spell-desc">
-
-        <button class="btn-main" id="btn-add-spell" onclick="confirmAddSpell()" disabled>Adicionar ao Grimório</button>
+        <input type="hidden" id="final-name"><input type="hidden" id="final-level"><input type="hidden" id="final-desc">
+        <button class="btn-main" id="btn-add-spell" onclick="confirmAddSpell()" disabled>Adicionar</button>
         <button class="btn-main" style="background:transparent; border:1px solid #444;" onclick="closeModal('modal-spell')">Cancelar</button>
     </div>
 </div>
 
 <script>
-    // --- API Configuration ---
     const API_BASE = 'https://www.dnd5eapi.co/api';
-    let apiSpellList = []; // Cache da lista de magias
-
-    // --- State ---
+    let apiSpellList = []; 
+    
+    // Default Data
     const defaultData = {
-        name: "Tav",
-        classIndex: "bard", // Usar o index da API (letras minusculas)
-        className: "Bard",
-        level: 1,
+        name: "Tav", classIndex: "bard", className: "Bard", level: 1,
         stats: { hp: 10, dc: 13, mod: 5 },
-        slotsMax: { 1: 2, 2: 0, 3: 0, 4: 0, 5: 0, 6:0, 7:0, 8:0, 9:0 },
-        slotsSpent: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6:0, 7:0, 8:0, 9:0 },
-        spells: []
+        slotsMax: { 1:2, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0 },
+        slotsSpent: { 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0 },
+        spells: [],
+        notes: "" // Novo campo de notas
     };
     let data = {};
 
-    // --- Initialization ---
+    // --- INIT ---
     async function init() {
-        loadLocalData();
+        loadData();
         render();
         
-        // Background load: Lista de magias para o search
+        // Setup Notes Listener (Salvar ao digitar)
+        const noteArea = document.getElementById('notepad-area');
+        noteArea.value = data.notes || "";
+        noteArea.addEventListener('input', function() {
+            data.notes = this.value;
+            saveDataSilent(); // Salva sem re-renderizar tudo
+        });
+
+        // Load API Background
         if(apiSpellList.length === 0) {
             try {
-                const response = await fetch(`${API_BASE}/spells`);
-                const result = await response.json();
-                apiSpellList = result.results; // Array com {index, name, url}
-                console.log("API: Lista de magias carregada.", apiSpellList.length);
-            } catch (e) {
-                console.error("Erro ao carregar API", e);
-            }
+                const res = await fetch(`${API_BASE}/spells`);
+                const json = await res.json();
+                apiSpellList = json.results;
+            } catch(e) { console.error("API Error"); }
         }
     }
 
-    function loadLocalData() {
-        const saved = localStorage.getItem('rpgSheetPro');
-        if (saved) {
-            data = JSON.parse(saved);
-        } else {
-            data = JSON.parse(JSON.stringify(defaultData));
-        }
+    // --- DATA HANDLING ---
+    function loadData() {
+        const saved = localStorage.getItem('rpgSheetV2'); // Nova chave v2
+        if (saved) data = JSON.parse(saved);
+        else data = JSON.parse(JSON.stringify(defaultData));
     }
-
+    
     function saveData() {
-        localStorage.setItem('rpgSheetPro', JSON.stringify(data));
+        localStorage.setItem('rpgSheetV2', JSON.stringify(data));
         render();
     }
-
-    // --- API Logic: Class Progression ---
-    async function updateClassSlotsFromAPI() {
-        showLoading(true, "Consultando tabelas de classe...");
-        try {
-            // Ex: https://www.dnd5eapi.co/api/classes/bard/levels/5
-            const url = `${API_BASE}/classes/${data.classIndex}/levels/${data.level}`;
-            const res = await fetch(url);
-            
-            if(!res.ok) throw new Error("Classe/Nível não encontrado na API");
-            
-            const levelData = await res.json();
-            
-            // Atualizar slots se tiver spellcasting
-            if (levelData.spellcasting) {
-                const slots = levelData.spellcasting;
-                // A API retorna algo como: { spell_slots_level_1: 4, spell_slots_level_2: 3 ... }
-                
-                // Resetar slots maximos
-                for(let i=1; i<=9; i++) data.slotsMax[i] = 0;
-
-                // Mapear retorno da API para nosso formato
-                if(slots.spell_slots_level_1) data.slotsMax[1] = slots.spell_slots_level_1;
-                if(slots.spell_slots_level_2) data.slotsMax[2] = slots.spell_slots_level_2;
-                if(slots.spell_slots_level_3) data.slotsMax[3] = slots.spell_slots_level_3;
-                if(slots.spell_slots_level_4) data.slotsMax[4] = slots.spell_slots_level_4;
-                if(slots.spell_slots_level_5) data.slotsMax[5] = slots.spell_slots_level_5;
-                if(slots.spell_slots_level_6) data.slotsMax[6] = slots.spell_slots_level_6;
-                if(slots.spell_slots_level_7) data.slotsMax[7] = slots.spell_slots_level_7;
-                if(slots.spell_slots_level_8) data.slotsMax[8] = slots.spell_slots_level_8;
-                if(slots.spell_slots_level_9) data.slotsMax[9] = slots.spell_slots_level_9;
-
-                alert(`Nível Atualizado! Slots sincronizados com a tabela de ${data.className}.`);
-            } else {
-                alert("Essa classe não possui Spellcasting nativo ou a API não retornou slots (ex: Warlock funciona diferente).");
-            }
-            saveData();
-
-        } catch (error) {
-            alert("Erro ao buscar dados da classe na API: " + error.message);
-        } finally {
-            showLoading(false);
-        }
-    }
-
-    // --- API Logic: Spell Search ---
-    function filterSpells() {
-        const input = document.getElementById('api-search').value.toLowerCase();
-        const suggestionsBox = document.getElementById('spell-suggestions');
-        suggestionsBox.innerHTML = '';
-        
-        if(input.length < 2) {
-            suggestionsBox.style.display = 'none';
-            return;
-        }
-
-        const filtered = apiSpellList.filter(s => s.name.toLowerCase().includes(input)).slice(0, 10);
-        
-        if(filtered.length > 0) {
-            suggestionsBox.style.display = 'block';
-            filtered.forEach(spell => {
-                const div = document.createElement('div');
-                div.className = 'suggestion-item';
-                div.innerText = spell.name;
-                div.onclick = () => fetchSpellDetails(spell.url);
-                suggestionsBox.appendChild(div);
-            });
-        } else {
-            suggestionsBox.style.display = 'none';
-        }
-    }
-
-    async function fetchSpellDetails(url) {
-        showLoading(true, "Decifrando pergaminho...");
-        document.getElementById('spell-suggestions').style.display = 'none';
-        
-        try {
-            const res = await fetch(`https://www.dnd5eapi.co${url}`);
-            const spell = await res.json();
-            
-            // Preencher Preview
-            document.getElementById('api-search').value = spell.name;
-            document.getElementById('preview-name').innerText = spell.name;
-            
-            let desc = spell.desc[0]; // Pega o primeiro paragrafo
-            const levelText = spell.level === 0 ? "Truque (Cantrip)" : `Nível ${spell.level}`;
-            const school = spell.school.name;
-            
-            document.getElementById('preview-meta').innerText = `${levelText} • ${school}`;
-            document.getElementById('preview-desc').innerText = desc.substring(0, 100) + "...";
-            document.getElementById('spell-details-preview').style.display = 'block';
-
-            // Preparar dados para salvar
-            document.getElementById('final-spell-name').value = spell.name;
-            document.getElementById('final-spell-level').value = spell.level;
-            document.getElementById('final-spell-desc').value = desc;
-            
-            document.getElementById('btn-add-spell').disabled = false;
-            document.getElementById('btn-add-spell').innerText = "Aprender " + spell.name;
-
-        } catch(e) {
-            alert("Erro ao puxar detalhes da magia.");
-        } finally {
-            showLoading(false);
-        }
-    }
-
-    // --- Core Logic ---
     
-    function saveCharData() {
-        const oldClass = data.classIndex;
-        const oldLevel = data.level;
+    function saveDataSilent() {
+        localStorage.setItem('rpgSheetV2', JSON.stringify(data));
+    }
 
-        data.name = document.getElementById('edit-name').value;
-        const selectClass = document.getElementById('edit-class');
-        data.classIndex = selectClass.value;
-        data.className = selectClass.options[selectClass.selectedIndex].text;
+    // --- TABS LOGIC ---
+    function switchTab(tabName) {
+        // Hide all contents
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
         
-        data.level = parseInt(document.getElementById('edit-level').value);
-        data.stats.hp = parseInt(document.getElementById('edit-hp').value);
-        data.stats.dc = parseInt(document.getElementById('edit-dc').value);
-        data.stats.mod = parseInt(document.getElementById('edit-mod').value);
-
-        closeModal('modal-char');
-        saveData();
-
-        // Se mudou classe ou nível, pergunta se quer atualizar slots
-        if(oldClass !== data.classIndex || oldLevel !== data.level) {
-            if(confirm("Mudança de Nível/Classe detectada. Deseja atualizar seus Slots automaticamente pela API?")) {
-                updateClassSlotsFromAPI();
-            }
-        }
-    }
-
-    function confirmAddSpell() {
-        const name = document.getElementById('final-spell-name').value;
-        const level = parseInt(document.getElementById('final-spell-level').value);
-        const desc = document.getElementById('final-spell-desc').value;
-
-        data.spells.push({ id: Date.now(), name, level, desc });
-        saveData();
-        closeModal('modal-spell');
+        // Show selected
+        document.getElementById(`tab-${tabName}`).classList.add('active');
         
-        // Reset Modal
-        document.getElementById('api-search').value = '';
-        document.getElementById('spell-details-preview').style.display = 'none';
-        document.getElementById('btn-add-spell').disabled = true;
+        // Highlight button (simplificado)
+        const btnIndex = tabName === 'main' ? 0 : 1;
+        document.querySelectorAll('.tab-btn')[btnIndex].classList.add('active');
     }
 
-    function castSpell(level) {
-        if(level === 0) return;
-        if(data.slotsSpent[level] < data.slotsMax[level]) {
-            data.slotsSpent[level]++;
+    // --- SPELL/CHAR LOGIC (Igual anterior) ---
+    async function updateClassSlots() {
+        showLoading(true, "Sincronizando...");
+        try {
+            const res = await fetch(`${API_BASE}/classes/${data.classIndex}/levels/${data.level}`);
+            if(!res.ok) throw new Error("Erro API");
+            const json = await res.json();
+            
+            if(json.spellcasting) {
+                for(let i=1; i<=9; i++) data.slotsMax[i] = 0; // Reset
+                const s = json.spellcasting;
+                if(s.spell_slots_level_1) data.slotsMax[1] = s.spell_slots_level_1;
+                if(s.spell_slots_level_2) data.slotsMax[2] = s.spell_slots_level_2;
+                if(s.spell_slots_level_3) data.slotsMax[3] = s.spell_slots_level_3;
+                if(s.spell_slots_level_4) data.slotsMax[4] = s.spell_slots_level_4;
+                if(s.spell_slots_level_5) data.slotsMax[5] = s.spell_slots_level_5;
+                if(s.spell_slots_level_6) data.slotsMax[6] = s.spell_slots_level_6;
+                if(s.spell_slots_level_7) data.slotsMax[7] = s.spell_slots_level_7;
+                if(s.spell_slots_level_8) data.slotsMax[8] = s.spell_slots_level_8;
+                if(s.spell_slots_level_9) data.slotsMax[9] = s.spell_slots_level_9;
+                alert("Slots atualizados!");
+            } else { alert("Sem slots padrão para essa classe."); }
             saveData();
-        }
+        } catch(e) { alert("Erro ao atualizar slots."); }
+        finally { showLoading(false); }
     }
 
-    function toggleSlot(level, index) {
-        const available = data.slotsMax[level] - data.slotsSpent[level];
-        if(index < available) data.slotsSpent[level]++;
-        else data.slotsSpent[level]--;
-        saveData();
-    }
-
-    function removeSpell(index) {
-        if(confirm("Esquecer esta magia?")) {
-            data.spells.splice(index, 1);
-            saveData();
-        }
-    }
-
-    function longRest() {
-        if(confirm("Fazer descanso longo?")) {
-            for(let i in data.slotsSpent) data.slotsSpent[i] = 0;
-            saveData();
-        }
-    }
-
-    function hardReset() {
-        if(confirm("Apagar TUDO?")) {
-            localStorage.clear();
-            location.reload();
-        }
-    }
-
-    // --- Render ---
+    // --- RENDER ---
     function render() {
         // Header
         document.getElementById('char-name').innerText = data.name;
         document.getElementById('char-class').innerText = data.className;
         document.getElementById('char-level').innerText = data.level;
+        
+        // Stats
         document.getElementById('hp-display').innerText = data.stats.hp;
         document.getElementById('dc-display').innerText = data.stats.dc;
         document.getElementById('mod-display').innerText = "+" + data.stats.mod;
@@ -490,89 +345,132 @@
         const container = document.getElementById('slots-container');
         container.innerHTML = '';
         let hasSlots = false;
-        
         for(let i=1; i<=9; i++) {
             if(data.slotsMax[i] > 0) {
                 hasSlots = true;
-                const row = document.createElement('div');
-                row.className = 'slot-row';
-                
-                let bubblesHtml = '';
-                const available = data.slotsMax[i] - data.slotsSpent[i];
-                
+                const av = data.slotsMax[i] - data.slotsSpent[i];
+                let bubbles = '';
                 for(let j=0; j<data.slotsMax[i]; j++) {
-                    const status = j < available ? 'ready' : 'spent';
-                    bubblesHtml += `<div class="bubble ${status}" onclick="toggleSlot(${i}, ${j})"></div>`;
+                    const cls = j < av ? 'ready' : 'spent';
+                    bubbles += `<div class="bubble ${cls}" onclick="toggleSlot(${i}, ${j})"></div>`;
                 }
-
-                row.innerHTML = `
-                    <div class="slot-label">Nível ${i}</div>
-                    <div class="slot-bubbles">${bubblesHtml}</div>
-                `;
-                container.appendChild(row);
+                container.innerHTML += `<div class="slot-row"><div class="slot-label">Nível ${i}</div><div class="slot-bubbles">${bubbles}</div></div>`;
             }
         }
-        if(!hasSlots) container.innerHTML = `<p style="text-align:center; color:#555">Sem slots. Vá em Ajustes e defina sua classe/nível.</p>`;
+        if(!hasSlots) container.innerHTML = "<p style='color:#666; text-align:center;'>Sem slots configurados.</p>";
 
         // Spells
         const list = document.getElementById('spell-list');
         list.innerHTML = '';
         data.spells.sort((a,b) => a.level - b.level);
-        
-        data.spells.forEach((spell, idx) => {
-            const li = document.createElement('li');
-            li.className = 'spell-card';
-            
-            const lvlLabel = spell.level === 0 ? "Truque" : `Nível ${spell.level}`;
-            const canCast = spell.level === 0 || (data.slotsMax[spell.level] - data.slotsSpent[spell.level] > 0);
-            
-            li.innerHTML = `
-                <div class="spell-main">
-                    <h3>${spell.name}</h3>
-                    <div class="spell-meta">${lvlLabel}</div>
-                </div>
-                <div>
-                    <button class="btn-cast" onclick="castSpell(${spell.level})" 
-                        ${!canCast ? 'disabled' : ''}>
-                        ${spell.level === 0 ? '♾️' : 'Gastar'}
-                    </button>
-                    <button onclick="removeSpell(${idx})" style="background:none; color:#555; margin-left:5px;">&times;</button>
-                </div>
-            `;
-            list.appendChild(li);
+        data.spells.forEach((s, idx) => {
+            const can = s.level === 0 || (data.slotsMax[s.level] - data.slotsSpent[s.level] > 0);
+            list.innerHTML += `
+                <li class="spell-card">
+                    <div class="spell-main"><h3>${s.name}</h3><span class="spell-meta">${s.level===0?'Truque':'Nível '+s.level}</span></div>
+                    <div>
+                        <button class="btn-cast" onclick="castSpell(${s.level})" ${!can?'disabled':''}>${s.level===0?'♾️':'Gastar'}</button>
+                        <button onclick="removeSpell(${idx})" style="background:none; color:#555; margin-left:5px;">&times;</button>
+                    </div>
+                </li>`;
         });
     }
 
-    // --- Utils ---
-    function showLoading(show, text="") {
-        const el = document.getElementById('loading');
-        if(show) {
-            document.getElementById('loading-text').innerText = text;
-            el.style.display = 'flex';
-        } else {
-            el.style.display = 'none';
+    // --- ACTIONS ---
+    function castSpell(lvl) {
+        if(lvl > 0 && data.slotsSpent[lvl] < data.slotsMax[lvl]) {
+            data.slotsSpent[lvl]++;
+            saveData();
         }
     }
+    function toggleSlot(lvl, idx) {
+        const av = data.slotsMax[lvl] - data.slotsSpent[lvl];
+        if(idx < av) data.slotsSpent[lvl]++; else data.slotsSpent[lvl]--;
+        saveData();
+    }
+    function longRest() { if(confirm("Descanso Longo?")) { for(let i in data.slotsSpent) data.slotsSpent[i]=0; saveData(); } }
+    function removeSpell(idx) { if(confirm("Remover?")) { data.spells.splice(idx,1); saveData(); } }
+    function clearNotes() { if(confirm("Apagar notas?")) { data.notes=""; document.getElementById('notepad-area').value=""; saveDataSilent(); } }
 
+    // --- MODALS & API ---
     function openCharModal() {
         document.getElementById('edit-name').value = data.name;
-        // Tentar selecionar a classe certa
-        const sel = document.getElementById('edit-class');
-        sel.value = data.classIndex || 'bard';
-        
+        document.getElementById('edit-class').value = data.classIndex || 'bard';
         document.getElementById('edit-level').value = data.level;
         document.getElementById('edit-hp').value = data.stats.hp;
         document.getElementById('edit-dc').value = data.stats.dc;
         document.getElementById('edit-mod').value = data.stats.mod;
         document.getElementById('modal-char').style.display = 'flex';
     }
+    function saveCharData() {
+        const oldC = data.classIndex; const oldL = data.level;
+        data.name = document.getElementById('edit-name').value;
+        const sel = document.getElementById('edit-class');
+        data.classIndex = sel.value; data.className = sel.options[sel.selectedIndex].text;
+        data.level = parseInt(document.getElementById('edit-level').value);
+        data.stats.hp = parseInt(document.getElementById('edit-hp').value);
+        data.stats.dc = parseInt(document.getElementById('edit-dc').value);
+        data.stats.mod = parseInt(document.getElementById('edit-mod').value);
+        closeModal('modal-char');
+        saveData();
+        if(oldC !== data.classIndex || oldL !== data.level) {
+            if(confirm("Nível/Classe mudou. Atualizar slots pela API?")) updateClassSlots();
+        }
+    }
+
+    // Spell Search Logic
+    function filterSpells() {
+        const v = document.getElementById('api-search').value.toLowerCase();
+        const box = document.getElementById('spell-suggestions');
+        box.innerHTML = '';
+        if(v.length < 2) { box.style.display='none'; return; }
+        const fil = apiSpellList.filter(s=>s.name.toLowerCase().includes(v)).slice(0,8);
+        if(fil.length > 0) {
+            box.style.display='block';
+            fil.forEach(s => {
+                const d = document.createElement('div'); d.className='suggestion-item'; d.innerText=s.name;
+                d.onclick = () => fetchSpell(s.url);
+                box.appendChild(d);
+            });
+        } else box.style.display='none';
+    }
+    async function fetchSpell(url) {
+        showLoading(true); document.getElementById('spell-suggestions').style.display='none';
+        try {
+            const res = await fetch(`https://www.dnd5eapi.co${url}`);
+            const json = await res.json();
+            document.getElementById('prev-name').innerText = json.name;
+            document.getElementById('prev-meta').innerText = (json.level===0?"Cantrip":`Level ${json.level}`) + " • " + json.school.name;
+            document.getElementById('prev-desc').innerText = json.desc[0].substring(0,100)+"...";
+            document.getElementById('spell-preview').style.display='block';
+            
+            document.getElementById('final-name').value = json.name;
+            document.getElementById('final-level').value = json.level;
+            document.getElementById('final-desc').value = json.desc[0];
+            document.getElementById('btn-add-spell').disabled = false;
+        } catch(e) { alert("Erro detalhes"); }
+        finally { showLoading(false); }
+    }
+    function confirmAddSpell() {
+        data.spells.push({
+            id: Date.now(),
+            name: document.getElementById('final-name').value,
+            level: parseInt(document.getElementById('final-level').value),
+            desc: document.getElementById('final-desc').value
+        });
+        saveData(); closeModal('modal-spell');
+        document.getElementById('api-search').value=''; document.getElementById('spell-preview').style.display='none';
+    }
+
+    // Utils
+    function showLoading(b, t="Carregando...") { 
+        document.getElementById('loading').style.display = b ? 'flex' : 'none';
+        document.getElementById('loading-text').innerText = t;
+    }
+    function openSpellModal() { document.getElementById('modal-spell').style.display='flex'; }
+    function closeModal(id) { document.getElementById(id).style.display='none'; }
     
-    function openSpellModal() { document.getElementById('modal-spell').style.display = 'flex'; }
-    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-
-    // Start
     init();
-
 </script>
 </body>
 </html>
